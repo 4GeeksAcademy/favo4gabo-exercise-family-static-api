@@ -26,6 +26,8 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+
+# VER TODOS LOS INTEGRANTES DE LA FAMILIA
 @app.route('/members', methods=['GET'])
 def handle_hello():
 
@@ -34,18 +36,24 @@ def handle_hello():
     
     return jsonify(members), 200
 
+
+# VER UN SOLO INTEGRANTE POR EL ID
 @app.route("/member/<int:id>",methods=['GET'])
 def get_member(id):
-    try:
+
+    # try:
         member_needed=jackson_family.get_member(id)
-        if member_needed:
-            return member_needed,200
-        else:
-            return "error","the member does not exist",404
 
-    except:
-        return "there was an error in the server",500
+    # if member_needed: 
+        return jsonify(member_needed) ,200
+    # else:
+    #     return jsonify({"msg":"the member doesn't exist"}),404
 
+    # except:
+    #     return jsonify({"msg":"there was an error in the server"}),500
+
+
+# CREAR INTEGRANTES DE LA FAMILIA
 @app.route("/member",methods=['POST'])
 def post_new_member():
     try:
@@ -53,7 +61,6 @@ def post_new_member():
         age=request.json.get("age")
         lucky_numbers=request.json.get("lucky_numbers")
         id=request.json.get("id")
-
     
         new_member={
             "first_name":first_name,
@@ -70,17 +77,20 @@ def post_new_member():
     except Exception as e:
         return jsonify({"error": str(e)}),404
 
+
+# ELIMINAR UN INTEGRANTE DE LA FAMILIA POR ID
 @app.route("/member/<int:id>",methods=["DELETE"])
 def delete_member(id):
     try:
         members_list_updated=jackson_family.delete_member(id)
         if (members_list_updated):
-            return jsonify({"message":"the member does not exist!"}),404
-        else:
             return jsonify({"done":True}),200
 
+        else:
+            return jsonify({"message":"the member does not exist!"}),404
+            
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
