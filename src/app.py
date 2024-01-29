@@ -57,37 +57,23 @@ def get_member(id):
 @app.route("/member",methods=['POST'])
 def post_new_member():
     try:
-        first_name=request.json.get("first_name")
-        age=request.json.get("age")
-        lucky_numbers=request.json.get("lucky_numbers")
-        id=request.json.get("id")
-    
-        new_member={
-            "first_name":first_name,
-            "age":age,
-            "id":jackson_family._generateId(),
-            "lucky_numbers":lucky_numbers,
-            "last_name":"Jackson"
-        }
-
-        jackson_family.add_member(new_member)
-
-        return jsonify({"message":"Member added succesfully"}),200
-    
+        body = request.json
+        new_member = jackson_family.add_member(body)
+        return jsonify(new_member),200
     except Exception as e:
-        return jsonify({"error": str(e)}),404
+        return jsonify({"error": str(e)}), 500
 
 
 # ELIMINAR UN INTEGRANTE DE LA FAMILIA POR ID
 @app.route("/member/<int:id>",methods=["DELETE"])
 def delete_member(id):
     try:
-        members_list_updated=jackson_family.delete_member(id)
-        if (members_list_updated):
-            return jsonify({"done":True}),200
+        members_list_updated = jackson_family.delete_member(id)
+    # if (members_list_updated):
+        return jsonify({"done":True}),200
 
-        else:
-            return jsonify({"message":"the member does not exist!"}),404
+    # else:
+        return jsonify("the member does not exist!"), 400
             
     except Exception as e:
         return jsonify({"error": str(e)}), 500
